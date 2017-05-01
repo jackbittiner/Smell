@@ -43,13 +43,14 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        pygame.display.update()
-        FPSCLOCK.tick(FPS)
         drawArena()
         drawPaddle(paddle1)
         drawPaddle(paddle2)
         drawBall(ball)
         ball = moveBall(ball, ballDirX, ballDirY)
+        ballDirX, ballDirY = checkForEdgeCollision(ball, ballDirX, ballDirY)
+        pygame.display.update()
+        FPSCLOCK.tick(FPS)
 
 def moveBall(ball, ballDirX, ballDirY):
     ball.x += ballDirX
@@ -71,6 +72,12 @@ def drawPaddle(paddle):
 def drawBall(ball):
     pygame.draw.rect(DISPLAYSURF, WHITE, ball)
 
+def checkForEdgeCollision(ball, ballDirX, ballDirY):
+    if ball.top == (LINETHICKNESS) or ball.bottom == (WINDOWHEIGHT - LINETHICKNESS):
+        ballDirY = ballDirY * - 1
+    if ball.left == (LINETHICKNESS) or ball.right == (WINDOWWIDTH - LINETHICKNESS):
+        ballDirX = ballDirX * - 1
+    return ballDirX, ballDirY
 
 if __name__ == '__main__':
     main()
