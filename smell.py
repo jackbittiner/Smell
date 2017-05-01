@@ -43,6 +43,13 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_q]: paddle1.move_ip(0,-10)
+        if pressed[pygame.K_a]: paddle1.move_ip(0,10)
+        if pressed[pygame.K_p]: paddle2.move_ip(0,-10)
+        if pressed[pygame.K_l]: paddle2.move_ip(0,10)
+
         drawArena()
         drawPaddle(paddle1)
         drawPaddle(paddle2)
