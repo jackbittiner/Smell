@@ -3,8 +3,8 @@ from pygame.locals import *
 
 FPS = 200
 
-WINDOWWIDTH = 400
-WINDOWHEIGHT = 300
+WINDOWWIDTH = 800
+WINDOWHEIGHT = 600
 
 LINETHICKNESS = 10
 PADDLESIZE = 50
@@ -33,7 +33,7 @@ def main():
     drawArena()
     drawPaddle(paddle1)
     drawPaddle(paddle2)
-    # drawBall(ball)
+    drawBall(ball)
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -54,6 +54,9 @@ def drawPaddle(paddle):
     elif paddle.top < LINETHICKNESS:
         paddle.top = LINETHICKNESS
     pygame.draw.rect(DISPLAYSURF, WHITE, paddle)
+
+def drawBall(ball):
+    pygame.draw.rect(DISPLAYSURF, WHITE, ball)
 
 
 if __name__ == '__main__':
