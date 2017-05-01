@@ -27,8 +27,12 @@ def main():
 
     paddle1 = pygame.Rect(PADDLEOFFSET, playerOnePosition, LINETHICKNESS, PADDLESIZE)
     paddle2 = pygame.Rect(WINDOWWIDTH-PADDLEOFFSET-LINETHICKNESS, playerTwoPosition, LINETHICKNESS, PADDLESIZE)
-
     ball = pygame.Rect(ballX, ballY, LINETHICKNESS, LINETHICKNESS)
+
+    ballDirX = -1 ## -1 = left 1 = right
+    ballDirY = -1 ## -1 = up 1 = down
+
+
 
     drawArena()
     drawPaddle(paddle1)
@@ -41,7 +45,16 @@ def main():
                 sys.exit()
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+        drawArena()
+        drawPaddle(paddle1)
+        drawPaddle(paddle2)
+        drawBall(ball)
+        ball = moveBall(ball, ballDirX, ballDirY)
 
+def moveBall(ball, ballDirX, ballDirY):
+    ball.x += ballDirX
+    ball.y += ballDirY
+    return ball
 
 def drawArena():
     DISPLAYSURF.fill((0,0,0))
