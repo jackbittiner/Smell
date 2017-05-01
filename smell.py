@@ -31,8 +31,8 @@ def main():
     ball = pygame.Rect(ballX, ballY, LINETHICKNESS, LINETHICKNESS)
 
     drawArena()
-    # drawPaddle(paddle1)
-    # drawPaddle(paddle2)
+    drawPaddle(paddle1)
+    drawPaddle(paddle2)
     # drawBall(ball)
     while True:
         for event in pygame.event.get():
@@ -45,11 +45,17 @@ def main():
 
 def drawArena():
     DISPLAYSURF.fill((0,0,0))
-    #Draw outline of arena
     pygame.draw.rect(DISPLAYSURF, WHITE, ((0,0),(WINDOWWIDTH,WINDOWHEIGHT)), LINETHICKNESS*2)
-    #Draw centre line
     pygame.draw.line(DISPLAYSURF, WHITE, ((WINDOWWIDTH/2),0),((WINDOWWIDTH/2),WINDOWHEIGHT), (LINETHICKNESS/4))
-# DISPLAYSURF.fill((0,124,124))
+
+def drawPaddle(paddle):
+    if paddle.bottom > WINDOWHEIGHT - LINETHICKNESS:
+        paddle.bottom = WINDOWHEIGHT - LINETHICKNESS
+    elif paddle.top < LINETHICKNESS:
+        paddle.top = LINETHICKNESS
+    pygame.draw.rect(DISPLAYSURF, WHITE, paddle)
+
+
 if __name__ == '__main__':
     main()
 
