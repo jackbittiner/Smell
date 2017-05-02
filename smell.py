@@ -1,7 +1,7 @@
 import pygame, sys
 from pygame.locals import *
 
-FPS = 200
+FPS = 1000
 
 WINDOWWIDTH = 800
 WINDOWHEIGHT = 600
@@ -24,6 +24,9 @@ def main():
 
     playerOnePosition = (WINDOWHEIGHT - PADDLESIZE)/2
     playerTwoPosition = (WINDOWHEIGHT - PADDLESIZE)/2
+
+    player_1_score = 0
+    player_2_score = 0
 
     paddle1 = pygame.Rect(PADDLEOFFSET, playerOnePosition, LINETHICKNESS, PADDLESIZE)
     paddle2 = pygame.Rect(WINDOWWIDTH-PADDLEOFFSET-LINETHICKNESS, playerTwoPosition, LINETHICKNESS, PADDLESIZE)
@@ -56,6 +59,7 @@ def main():
         drawBall(ball)
         ball = moveBall(ball, ballDirX, ballDirY)
         ballDirX = ballDirX * checkHitBall(ball, paddle1, paddle2, ballDirX)
+        player_1_score, player_2_score = checkPointScored(paddle1, ball,player_1_score,player_2_score, ballDirX)
         ballDirX, ballDirY = checkForEdgeCollision(ball, ballDirX, ballDirY)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -89,10 +93,17 @@ def checkForEdgeCollision(ball, ballDirX, ballDirY):
 
 def checkHitBall(ball, paddle1, paddle2, ballDirX):
     if ballDirX == -1 and paddle1.right == ball.left and paddle1.top < ball.top and paddle1.bottom > ball.bottom:
-        return -1
+        return -2
     elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
-        return -1
+        return -2
     else: return 1
+
+def checkPointScored(paddle1, ball,player_1_score, player_2_score, ballDirX):
+    if ball.left == LINETHICKNESS:
+        player_1_score += 7
+    elif ball.right == WINDOWWIDTH - LINETHICKNESS
+        player_2_score += 7
+    return player_1_score, player_2_score
 
 if __name__ == '__main__':
     main()
