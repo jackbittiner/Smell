@@ -3,8 +3,8 @@ from pygame.locals import *
 
 FPS = 1000
 
-WINDOWWIDTH = 800
-WINDOWHEIGHT = 600
+WINDOWWIDTH = 700
+WINDOWHEIGHT = 700
 
 LINETHICKNESS = 10
 PADDLESIZE = 50
@@ -35,24 +35,24 @@ def main():
     player_1_score = 0
     player_2_score = 0
 
-    paddle1 = pygame.Rect(PADDLEOFFSET, playerOnePosition, LINETHICKNESS, PADDLESIZE)
-    paddle2 = pygame.Rect(WINDOWWIDTH-PADDLEOFFSET-LINETHICKNESS, playerTwoPosition, LINETHICKNESS, PADDLESIZE)
+    left_paddle = pygame.Rect(PADDLEOFFSET, playerOnePosition, LINETHICKNESS, PADDLESIZE)
+    right_paddle = pygame.Rect(WINDOWWIDTH-PADDLEOFFSET-LINETHICKNESS, playerTwoPosition, LINETHICKNESS, PADDLESIZE)
 
-    paddle3 = pygame.Rect(playerThreePosition, PADDLEOFFSET, PADDLESIZE, LINETHICKNESS)
-    paddle4 = pygame.Rect(playerFourPosition,WINDOWHEIGHT-PADDLEOFFSET-LINETHICKNESS, PADDLESIZE, LINETHICKNESS)
+    top_paddle = pygame.Rect(playerThreePosition, PADDLEOFFSET, PADDLESIZE, LINETHICKNESS)
+    bottom_paddle = pygame.Rect(playerFourPosition,WINDOWHEIGHT-PADDLEOFFSET-LINETHICKNESS, PADDLESIZE, LINETHICKNESS)
 
     ball = pygame.Rect(ballX, ballY, LINETHICKNESS, LINETHICKNESS)
 
-    ballDirX = -1 ## -1 = left 1 = right
-    ballDirY = -1 ## -1 = up 1 = down
+    ballDirX = -3 ## -1 = left 1 = right
+    ballDirY = -3 ## -1 = up 1 = down
 
 
 
     drawArena()
-    drawPaddle(paddle1)
-    drawPaddle(paddle2)
-    drawPaddle(paddle3)
-    drawPaddle(paddle4)
+    drawPaddle(left_paddle)
+    drawPaddle(right_paddle)
+    drawPaddle(top_paddle)
+    drawPaddle(bottom_paddle)
     drawBall(ball)
     while True:
         for event in pygame.event.get():
@@ -61,25 +61,26 @@ def main():
                 sys.exit()
 
         pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_q]: paddle1.move_ip(0,-10)
-        if pressed[pygame.K_a]: paddle1.move_ip(0,10)
-        if pressed[pygame.K_p]: paddle2.move_ip(0,-10)
-        if pressed[pygame.K_l]: paddle2.move_ip(0,10)
+        if pressed[pygame.K_q]: left_paddle.move_ip(0,-10)
+        if pressed[pygame.K_a]: left_paddle.move_ip(0,10)
+        if pressed[pygame.K_p]: right_paddle.move_ip(0,-10)
+        if pressed[pygame.K_l]: right_paddle.move_ip(0,10)
 
-        if pressed[pygame.K_m]: paddle3.move_ip(10,0)
-        if pressed[pygame.K_n]: paddle3.move_ip(-10,0)
-        if pressed[pygame.K_x]: paddle4.move_ip(-10,0)
-        if pressed[pygame.K_c]: paddle4.move_ip(10,0)
+        if pressed[pygame.K_m]: top_paddle.move_ip(10,0)
+        if pressed[pygame.K_n]: top_paddle.move_ip(-10,0)
+        if pressed[pygame.K_x]: bottom_paddle.move_ip(-10,0)
+        if pressed[pygame.K_c]: bottom_paddle.move_ip(10,0)
 
         drawArena()
-        drawPaddle(paddle1)
-        drawPaddle(paddle2)
-        drawPaddle(paddle3)
-        drawPaddle(paddle4)
+        drawPaddle(left_paddle)
+        drawPaddle(right_paddle)
+        drawPaddle(top_paddle)
+        drawPaddle(bottom_paddle)
         drawBall(ball)
         ball = moveBall(ball, ballDirX, ballDirY)
-        ballDirX = ballDirX * checkHitBall(ball, paddle1, paddle2, ballDirX)
-        player_1_score, player_2_score = checkPointScored(paddle1, ball,player_1_score,player_2_score, ballDirX)
+        ballDirX = ballDirX * checkHitBall(ball, left_paddle, right_paddle, ballDirX)
+        ballDirY = ballDirY * checkHitBallY(ball, top_paddle, bottom_paddle, ballDirY)
+        player_1_score, player_2_score = checkPointScored(left_paddle, ball,player_1_score,player_2_score, ballDirX)
         ballDirX, ballDirY = checkForEdgeCollision(ball, ballDirX, ballDirY)
         display_score_1(player_1_score)
         display_score_2(player_2_score)
@@ -94,13 +95,17 @@ def moveBall(ball, ballDirX, ballDirY):
 def drawArena():
     DISPLAYSURF.fill((0,0,0))
     pygame.draw.rect(DISPLAYSURF, WHITE, ((0,0),(WINDOWWIDTH,WINDOWHEIGHT)), LINETHICKNESS*2)
-    pygame.draw.line(DISPLAYSURF, WHITE, ((WINDOWWIDTH/2),0),((WINDOWWIDTH/2),WINDOWHEIGHT), (LINETHICKNESS/4))
+    # pygame.draw.line(DISPLAYSURF, WHITE, ((WINDOWWIDTH/2),0),((WINDOWWIDTH/2),WINDOWHEIGHT), (LINETHICKNESS/4))
 
 def drawPaddle(paddle):
     if paddle.bottom > WINDOWHEIGHT - LINETHICKNESS:
         paddle.bottom = WINDOWHEIGHT - LINETHICKNESS
     elif paddle.top < LINETHICKNESS:
         paddle.top = LINETHICKNESS
+    elif paddle.left < LINETHICKNESS:
+        paddle.left = LINETHICKNESS
+    elif paddle.right > WINDOWWIDTH - LINETHICKNESS:
+        paddle.right = WINDOWWIDTH - LINETHICKNESS
     pygame.draw.rect(DISPLAYSURF, WHITE, paddle)
 
 def drawBall(ball):
@@ -113,14 +118,21 @@ def checkForEdgeCollision(ball, ballDirX, ballDirY):
         ballDirX = ballDirX * - 1
     return ballDirX, ballDirY
 
-def checkHitBall(ball, paddle1, paddle2, ballDirX):
-    if ballDirX == -1 and paddle1.right == ball.left and paddle1.top < ball.top and paddle1.bottom > ball.bottom:
+def checkHitBall(ball, left_paddle, right_paddle, ballDirX):
+    if ballDirX == -1 and left_paddle.right == ball.left and left_paddle.top < ball.top and left_paddle.bottom > ball.bottom:
         return -1
-    elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
+    elif ballDirX == 1 and right_paddle.left == ball.right and right_paddle.top < ball.top and right_paddle.bottom > ball.bottom:
         return -1
     else: return 1
 
-def checkPointScored(paddle1, ball,player_1_score, player_2_score, ballDirX):
+def checkHitBallY(ball, top_paddle, bottom_paddle, ballDirY):
+    if ballDirY == 1 and bottom_paddle.top == ball.bottom and bottom_paddle.right < ball.right and bottom_paddle.left > ball.left:
+        return -1
+    elif ballDirY == -1 and top_paddle.bottom == ball.top and top_paddle.left < ball.left and top_paddle.right > ball.right:
+        return -1
+    else: return 1
+
+def checkPointScored(left_paddle, ball,player_1_score, player_2_score, ballDirX):
     if ball.left == LINETHICKNESS:
         player_1_score += 7
     elif ball.right == WINDOWWIDTH - LINETHICKNESS:
