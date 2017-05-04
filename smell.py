@@ -25,6 +25,9 @@ def main():
     playerOnePosition = (WINDOWHEIGHT - PADDLESIZE)/2
     playerTwoPosition = (WINDOWHEIGHT - PADDLESIZE)/2
 
+    playerThreePosition = (WINDOWWIDTH - PADDLESIZE)/2
+    playerFourPosition = (WINDOWWIDTH - PADDLESIZE)/2
+
     global BASICFONT, BASICFONTSIZE
     BASICFONTSIZE = 20
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
@@ -34,6 +37,10 @@ def main():
 
     paddle1 = pygame.Rect(PADDLEOFFSET, playerOnePosition, LINETHICKNESS, PADDLESIZE)
     paddle2 = pygame.Rect(WINDOWWIDTH-PADDLEOFFSET-LINETHICKNESS, playerTwoPosition, LINETHICKNESS, PADDLESIZE)
+
+    paddle3 = pygame.Rect(playerThreePosition, PADDLEOFFSET, PADDLESIZE, LINETHICKNESS)
+    paddle4 = pygame.Rect(playerFourPosition,WINDOWHEIGHT-PADDLEOFFSET-LINETHICKNESS, PADDLESIZE, LINETHICKNESS)
+
     ball = pygame.Rect(ballX, ballY, LINETHICKNESS, LINETHICKNESS)
 
     ballDirX = -1 ## -1 = left 1 = right
@@ -44,6 +51,8 @@ def main():
     drawArena()
     drawPaddle(paddle1)
     drawPaddle(paddle2)
+    drawPaddle(paddle3)
+    drawPaddle(paddle4)
     drawBall(ball)
     while True:
         for event in pygame.event.get():
@@ -57,9 +66,16 @@ def main():
         if pressed[pygame.K_p]: paddle2.move_ip(0,-10)
         if pressed[pygame.K_l]: paddle2.move_ip(0,10)
 
+        if pressed[pygame.K_m]: paddle3.move_ip(10,0)
+        if pressed[pygame.K_n]: paddle3.move_ip(-10,0)
+        if pressed[pygame.K_x]: paddle4.move_ip(-10,0)
+        if pressed[pygame.K_c]: paddle4.move_ip(10,0)
+
         drawArena()
         drawPaddle(paddle1)
         drawPaddle(paddle2)
+        drawPaddle(paddle3)
+        drawPaddle(paddle4)
         drawBall(ball)
         ball = moveBall(ball, ballDirX, ballDirY)
         ballDirX = ballDirX * checkHitBall(ball, paddle1, paddle2, ballDirX)
